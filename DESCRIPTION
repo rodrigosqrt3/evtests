@@ -1,0 +1,37 @@
+Package: evtests
+Title: Tests and Diagnostics for the Upper Tail of a Distribution
+Version: 0.1.0
+Authors@R: person("Rodrigo Fonseca", "Villa", email = "rodrigo03.villa@gmail.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0005-2938-2270"))
+Description: Semiparametric tools to examine the upper tail of a sample before
+    an extreme value analysis: tests of the extreme value condition, tests of
+    the domain of attraction and of a finite end-point, estimators of the
+    extreme value index and of the end-point, and the choice of the number of
+    upper order statistics. Includes the tests of Hasofer and Wang (1992),
+    Segers and Teugels (2000), Dietrich, de Haan and Husler (2002), Neves,
+    Picek and Fraga Alves (2006), Drees, de Haan and Li (2006), Neves and
+    Fraga Alves (2007), Neves and Pereira (2010), del Castillo, Daoudi and
+    Lockhart (2014) and Fraga Alves, Neves and Rosario (2016), and the
+    goodness-of-fit tests of Choulakian and Stephens (2001). Each method is
+    tested against the numerical results of its source paper, and the
+    differences found are documented.
+Language: en-US
+License: GPL (>= 3)
+URL: https://github.com/rodrigosqrt3/evtests
+BugReports: https://github.com/rodrigosqrt3/evtests/issues
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1.0)
+Imports:
+    graphics,
+    stats
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.1

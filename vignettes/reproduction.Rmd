@@ -1,0 +1,344 @@
+---
+title: "Reproduction notes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproduction notes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(evtests)
+```
+
+Every method in evtests is checked against the numerical results of its
+source paper: worked examples are recomputed from the printed data, and
+simulation tables are re-run with the published design. This vignette
+records, paper by paper, what was reproduced and where a printed value
+differs from the value given by the paper's own formulas or design. The
+purpose is practical: a user comparing evtests with a published table should
+know which differences are expected. The checks themselves are in the
+package tests (`tests/testthat/`), where each published value appears next
+to the recomputed one.
+
+Throughout, `k` is the number of excesses over the `(k + 1)`-th largest
+observation. Some papers count the threshold among the `k` top order
+statistics; their `k` is then one more than here.
+
+## Hill (1975)
+
+Table 1 (the 30 largest cities of the United States in 1940, data set
+`us_cities_1940`) is reproduced.
+
+* All 29 values of `i V[i]`, `alpha0` and `alpha1` agree to the two printed
+  decimals.
+* The statistic `H` agrees at two decimals in 24 of 28 rows. For `k` = 15, 26,
+  28 and 29 the recomputed values are 13.445, 21.425, 25.825 and 28.239
+  (printed 13.45, 21.42, 25.81, 28.23).
+* `k C1` agrees to two significant digits in 27 of 29 rows when the
+  populations are in inhabitants (the table prints them in thousands). For
+  `k = 3` and `k = 28` the recomputed values are 6.24e10 and 7.97e8 (printed
+  6.3e10 and 7.9e8).
+* The standard deviation ".20 alpha" and the chi-square value ".3" of the
+  text are reproduced; the chi-square is .29 with `alpha0` and .32 with
+  `alpha1`, and the paper does not say which was used.
+
+```{r}
+h <- hill1975(us_cities_1940$population, k = 1:29)
+head(h[, c("k", "alpha0", "alpha1", "H")])
+```
+
+## Pickands (1975)
+
+The paper has no numerical example. Equation 4.3 prints `exp(-c s)` in the
+integral that defines the scale estimate; equations 2.4 and 3.3 have
+`exp(c s)`, which is the form implemented. The paper says on p. 122 that the
+smallest minimiser should be used to choose `M`, and on p. 130 that the
+largest one would be a good choice.
+
+## Grimshaw (1993)
+
+The example of Section 4 (data set `nylon_fibres`) is reproduced: the bounds
+`theta_L = -3994.490358` and `h''(0) = -.008455`, the zero `.415834`, the
+estimates `k = .117698` and `alpha = .283040`, the log-likelihood 5.697968
+and the boundary value 1.985838.
+
+* Several printed values are truncated rather than rounded (the zero is
+  .4158348).
+* The second zero on `(0, theta_U)` is printed as 1.141551 with
+  `(k, alpha, L) = (1.111357, .973553, 2.072396)`. The zero of `h` is at
+  1.1415244, with `(k, alpha, L) = (.99963, .87570, 1.985469)`; the printed
+  triple corresponds to `theta = 1.1415472`, where `h` is not zero.
+* The printed `theta_U = 1.141552` is `1 / max(y)` without the subtraction of
+  `eps` described in step 2.
+* The note of Table 1 gives a median of .16200; the printed data have median
+  .184. The mean, standard deviation and interquartile range of the note
+  agree with the data (the interquartile range with quantile type 4).
+* The second display of p. 187 has `(1 + k X / alpha)^-1`; the derivation
+  and equation 2.2 have `(1 - k X / alpha)^-1`.
+* The "approximate 95% upper confidence bound" 9.099524 for the end-point is
+  reproduced (9.09945) with the one-sided normal quantile 1.645.
+
+```{r}
+fit <- grimshaw1993(nylon_fibres$excess)
+fit$zeros
+```
+
+## Drees, Ferreira & de Haan (2004)
+
+The paper has no numerical example. The asymptotic variance of Corollary 2.1
+is confirmed by simulation. The estimator is defined through a maximum over
+`gamma > -1/2`; the paper does not say what to report when the likelihood is
+maximised elsewhere.
+
+## Dekkers, Einmahl & de Haan (1989)
+
+The paper has no numerical example.
+
+* In the covariance matrix of equation 3.7, the factor
+  `(1 - 3 gamma)(1 - 4 gamma)` of `s22` (for `gamma <= 0`) is printed in the
+  numerator; equation 3.10, which follows from it, requires it in the
+  denominator. The variance of equation 3.10 is confirmed by simulation.
+* The covariance in Lemma 3.4(i) is printed as `2 sqrt(5)`; with unit
+  variances it is `2 / sqrt(5)`.
+* The sums of exponential spacings in Lemma 4.2 and Theorem 4.3 start at
+  `j = i`, which includes `j = 0` in a division by `j`; the Renyi
+  representation has `j = i + 1, ..., k`.
+* For the end-point estimator, the asymptotic variance of equation 5.3 was
+  not confirmed: with generalized Pareto tails (`gamma = -0.5` and `-0.3`,
+  `n = 10^7`, `k = 400`, 20000 replicates) the sampling variances were 9.19
+  and 88.8, against 8.4 and 70.5 from equation 5.3. `dekkers1989()`
+  therefore returns the end-point without an interval.
+
+## Hasofer & Wang (1992)
+
+Hasofer & Wang's `k` counts the threshold, so their `k = 50` is `k = 49`
+here.
+
+* The simulations of Tables 1 and 2 (`n = 300`, 50 top order statistics,
+  generalized extreme value samples) are reproduced, and so are the powers
+  of Table 3 against `gamma > 0`.
+* Against `gamma < 0`, the powers of Table 3 are lower than those obtained
+  with the critical values of Table 2, by up to .09 (for `gamma = -1/2` at
+  level .01, .600 printed against about .69), while the mean and standard
+  deviation of `W` agree with Table 1. The paper does not state the critical
+  values used for these rows.
+* In Table 7, the theoretical mean `1 / 59 = .016949` is printed as .0170.
+* Table 8 was interpolated from percentage points of Greenwood's statistic.
+  For 30 to 100 order statistics it agrees with the simulated limiting null
+  within 1.5% in every column; for 200 the printed points are 1-2% lower;
+  for 13 they differ by 2-3%, and the upper 1% point is 2204.6 against about
+  2370.
+
+## Neves, Picek & Fraga Alves (2006)
+
+The paper reports powers only in figures, so there is no table to compare
+with. The critical values are Gumbel quantiles and are exact. As in Neves &
+Fraga Alves (2007), the Hasofer-Wang statistic is printed as
+`W = 1 / (k (R - 1))`, while the mean and variance used to standardise it are
+those of the original statistic on `k + 1` order statistics. The density of
+the loggamma distribution is printed with `Gamma(alpha)` in the denominator
+instead of `Gamma(beta)`.
+
+## Neves & Fraga Alves (2007)
+
+Table 1 (generalized Pareto samples, `n = 1000`, 5000 replicates) is
+reproduced for both statistics within Monte Carlo error, with one
+qualification about the Hasofer-Wang statistic.
+
+* The paper defines `W = 1 / (k (R - 1))` (equations 1.2 and 2.3). With this
+  formula the size at `gamma = 0`, `k = 50` is about .072, against .051 in
+  the table. The table is reproduced by the original statistic of Hasofer &
+  Wang on the `k + 1` largest observations, `W = 1 / ((k + 1) R - k)`, which
+  is the one used by `neves_fraga_alves2007()`.
+* In Table 1, the power of `R*` at `gamma = -0.4` decreases from .974
+  (`k = 150`) to .958 (`k = 200`), while the text states that the power
+  increases with `k`.
+
+## Fraga Alves & Neves (2014) and Fraga Alves, Neves & Rosario (2016)
+
+The 2014 paper reports its simulations in figures, and the data of its case
+study are not printed. Its Theorem 3 gives an interval for the end-point in
+the Gumbel domain, with the scale estimated by the mean excess of the `k`
+largest observations, which the paper calls the maximum likelihood estimator
+of the generalized Pareto scale (it is that of the exponential distribution).
+In simulations of the model of its Section 5 (negative Frechet, `beta = 0.5`,
+`n = 1000`, `k = 48`) the nominal 95% interval covered the end-point in all
+of 500 samples. For the 2016 paper:
+
+* Table 1 is reproduced for model 4 (Beta tails, `n = 1000`, 300
+  replicates): the average absolute errors of the sample maximum and of the
+  end-point estimator at the best `k` agree with the printed values (.029
+  and .014 for `gamma = -1/2`; .234 and .171 for `gamma = -1/5`).
+* The upper bound of equation 14 has no example that can be recomputed (the
+  application uses data that are not published with the paper). In our
+  simulations of model 4 (1000 to 5000 values, `k` from 25 to 200) the
+  coverage of a nominal 95% bound was 0.53-0.68 for `gamma = -0.2` and
+  0.85-0.93 for `gamma = -0.4`, in line with the slow convergence the paper
+  describes for `gamma` near 0.
+
+## Dietrich, de Haan & Husler (2002) and Husler & Li (2006)
+
+The limiting distributions were simulated (50000 replicates per value of
+`gamma`, Brownian motion on 4000 or 20000 points) and reproduce Tables 1 and
+2 of Husler & Li (2006) and the row `gamma > 0` of Table 1 of Dietrich et al.
+
+* The last term of the limit of `E` in equation 7 of Dietrich et al. has a
+  minus sign; Husler & Li (2006) give it with a plus sign. Simulating with
+  the printed sign reproduces the rows `gamma < 0` of Table 1 of Dietrich et
+  al.; the corrected sign reproduces Table 1 of Husler & Li, which
+  `dietrich2002()` uses.
+* In Table 1 of Dietrich et al., the column `p = .95` for `gamma <= -0.5` is
+  shifted by one row (printed .635, .635, .750, .886 for `gamma = -0.4` to
+  `-0.7`; simulated with the printed sign .637, .764, .928, 1.034).
+* In Table 3 of Husler & Li, three cells of the column `p = .70` differ from
+  the simulated values: `gamma = .25` (printed .120, simulated about .20),
+  `gamma = -.45` (.320 and .27) and `gamma = -.499` (.338 and .28).
+* The total relative errors of the `E` test in Table 4 of Husler & Li were not
+  reproduced (for example Cauchy .596 simulated against .457 printed); those
+  of the `PE` test were.
+* Equation 9 of Dietrich et al. prints `B(s) / (s ds)` for the integral of
+  `B(s) / s`, and p. 82 refers to a "Pareto with gamma = 0" where `gamma = 1`
+  is meant.
+
+## Drees, de Haan & Li (2006)
+
+The PDF available to us is the authors' preprint. Table 1 (limit quantiles
+of `k T`) is reproduced by simulation, and the empirical sizes of Tables 6
+and 7 are reproduced within Monte Carlo error for most cells.
+
+* The cell `gamma = -0.45`, `p = .995` of Table 1 is printed as 0.739, the
+  same value as the cell to its left; the simulated quantile is about 0.81.
+* In Table 6 (`n = 200`), the size for the normal distribution at
+  `k = 100` is printed as "87", without a decimal point (8.7 is consistent
+  with the neighbouring cells).
+* For the normal and reversed Burr distributions at large `k` the
+  simulated sizes are higher than the printed ones (for example 17.9 against
+  12.9), in cells where the maximum likelihood estimate is close to -1/2 and
+  depends on the algorithm.
+
+## Wang (1995)
+
+Both examples are printed in full (data sets `bushfires` and
+`mice_survival`).
+
+* With the tail allocation not stated in the paper, the examples are
+  reproduced with `alpha` shared equally between the two tails: bushfires on
+  the log scale, 27 observations; mice at `alpha = 20%`, 8 observations.
+* For the bushfires on the original scale at `alpha = 10%` the procedure
+  gives 13 observations against 12 printed. The statistic for 13
+  observations (0.5956 on Wang's scale) is just inside the acceptance region
+  (lower 5% point 0.5816 by simulation, 0.5950 from Table 8 of Hasofer &
+  Wang).
+* The mice example with an estimated end-point (82 observations) needs an
+  end-point estimator taken from other work, and the R-squared criterion
+  needs critical values that are not printed; neither is implemented.
+
+## Drees & Kaufmann (1998)
+
+With the recommended constants and `rho = 1`, Tables 1-4 are reproduced
+within Monte Carlo error for the Frechet distributions at `n = 500` and
+`n = 1000` (for example `gamma = 0.5`, `n = 1000`: RMSE .048). At `n = 100`
+the root mean squared error is dominated by a few samples with a very small
+selected `k` and varies between simulations. The estimator of `rho` used in
+Tables 5-6 is called "modified" without a definition of the modification.
+
+## Guillou & Hall (2001)
+
+* Section 2.2 states the stopping rule as the least `k` with `|T_l| > c`
+  for all larger `l`; Section 4.2 as the first `k` in an interval
+  `[n^a, n^b]` with `Q_k >= c`. The start of the search is not given.
+  `guillou_hall2001()` offers both readings.
+* With the first crossing from `k = 2`, the mean selected `k` of Table 1 is
+  roughly reproduced for the Frechet and Burr distributions, but the ratios
+  `R(c)`, close to 1 in the table, come out between 1.3 and 2.6 under every
+  reading we tried.
+* The optimal `k` of Table 1 is reproduced for the Burr and Frechet
+  distributions but not for the Student distributions (for `t4`, about 8,
+  17 and 25 against the printed 4, 9 and 12).
+* The expression of `Q(t)` in Section 4.2 integrates `T(u)^2` instead of
+  `T(t + u)^2`.
+
+## Danielsson, de Haan, Peng & de Vries (2001)
+
+The formula of Corollary 7 agrees with equations 3.9-3.10 and Corollary 3,
+and the mean estimate for the Frechet distribution with `gamma = 0.25` in
+Table I is reproduced.
+
+* In Table II, the row Extreme(11) prints a standard error of 0.063 with a
+  root mean squared error of 0.004; from the other columns the standard
+  error is about 0.003.
+* Table III has a row "Extreme(2)", whose numbers are those of Extreme(4).
+
+## Hall & Wang (1999)
+
+The example of Section 3 (data set `olympic_100m`) is reproduced: the
+estimate 9.9158 (printed 9.91), the shape 0.826 (printed 0.82; both printed
+values truncated), and the interval (9.80, 9.92), which corresponds to a 90%
+level; the paper does not state the level. The simulations of Table 1 were
+not reproduced: they appear to restrict the search for the end-point to a
+range that the paper does not give, and its text says that the values of
+`alpha` are less than 2 while the table includes 3, 4 and 5.
+
+## Smith (1985)
+
+The paper has no numerical example.
+
+## Neves & Pereira (2010)
+
+The rejection rates of Figure 1 are reproduced with the standard models
+(the statistics are not location invariant).
+
+* Equation 9 gives the limit of `sqrt(k) log(k) T1` as `B1 + B2`; from the
+  construction of `T1` it is `B1 - B2`.
+* The paper states that `T2*` shifts to the right for distributions in the
+  Gumbel domain with a finite end-point; for its own negative Frechet
+  example it shifts to the left (mean about -5.5 at `k = 100`), which also
+  leads to rejection by the two-sided test.
+
+## Segers & Teugels (2000)
+
+The formulas are confirmed (the score has mean 0 and variance 1/5 under the
+null law of Galton's ratio). The paper reports its simulations only in
+figures, with which our runs agree as far as they can be read. In the
+definition of `Z`, `T(xi_k)` is printed where `T(xi_i)` is meant.
+
+## del Castillo, Daoudi & Lockhart (2014)
+
+* The "Approximate" row of Table 1 is reproduced by the three-moment
+  approximation, and the "Asymptotic" row by simulation of Theorem 2.
+* The finite-sample 95% points of Table 1 are reproduced within about 0.4
+  (0.1 for `n >= 500`); the 99% points of `T_1` to `T_4` differ by up to 1.8
+  in both directions, and the printed 99% points are not monotone in `n`.
+  The paper does not say how `n / 2^k` is rounded.
+* The non-rejection rates under the contaminated null (p. 392, 95.3% to
+  98.5%) were not reproduced: a mixture of exponentials has a coefficient of
+  variation above 1, and our rates are about 90%.
+* The column "HW" of Tables 2 and 3 contains the test of Montfort & Witter
+  (MW).
+
+## Choulakian & Stephens (2001)
+
+The Wheaton River example (data set `wheaton_river`, printed to one
+decimal) is reproduced approximately, as the rounding of the printed data
+allows: deleting the smallest observations one at a time and keeping the
+excesses over 27.50, the estimates and statistics of Table 3 agree within
+0.015 for the shape, 0.25 for the scale, 0.005 for `W2` and 0.03 for `A2`,
+and the procedure stops after six deletions.
+
+* The first row of Table 3 gives `W2 = .2309`; the text gives .2389. The
+  recomputed value is .2304.
+* In Table 6, the alternative Z(0.25, 0.25) is a mixture of two identical
+  generalized Pareto distributions, that is a generalized Pareto
+  distribution, for which a power of 94.7% is not possible; the label is
+  probably misprinted.
+* The text gives the fitted scale for the lognormal as -1.406; Table 7 gives
+  1.406.
+
+## Bader, Yan & Zhang (2018)
+
+The p-values of the paper come from a table simulated by the authors that is
+not printed; `bader2018()` uses the asymptotic table of Choulakian & Stephens
+(2001) instead. The power study and the application are reported in a form
+that cannot be recomputed here (figures, and data not printed).
