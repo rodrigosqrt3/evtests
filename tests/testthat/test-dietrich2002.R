@@ -74,6 +74,23 @@ test_that("E and PE in closed form", {
   expect_equal(dietrich2002(7 * x, k = k)$statistic, e$statistic)
 })
 
+test_that("E for gamma_- = 0 and a single log-excess", {
+  d <- c(1.2, 0.7, 0.3)
+  e0 <- ev_condition_stat(d, mean(d), 0, 2, "E")
+  f <- function(t) {
+    j <- pmin(floor(3 * t), 2)
+    (d[j + 1] / mean(d) + log(t))^2 * t^2
+  }
+  num <- 3 * sum(vapply(0:2, function(j) {
+    stats::integrate(f, j / 3, (j + 1) / 3, rel.tol = 1e-12)$value
+  }, 0))
+  expect_equal(e0, num, tolerance = 1e-9)
+  one <- ev_condition_stat(0.5, 0.5, -0.2, 2, "E")
+  g <- function(t) (1 - (t^0.2 - 1) / (-0.2) * 1.2)^2 * t^2
+  expect_equal(one, stats::integrate(g, 0, 1, rel.tol = 1e-12)$value,
+               tolerance = 1e-9)
+})
+
 test_that("p-values from the tables: the quantile at gamma and the edges", {
   tab <- evtests:::limit_tables$E
   # table_at interpolates linearly between grid columns and holds the edges

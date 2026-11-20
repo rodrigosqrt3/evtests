@@ -1,5 +1,7 @@
 # evtests
 
+[![CRAN status](https://www.r-pkg.org/badges/version/evtests)](https://CRAN.R-project.org/package=evtests) &nbsp; [![R-CMD-check](https://github.com/rodrigosqrt3/evtests/actions/workflows/r.yml/badge.svg)](https://github.com/rodrigosqrt3/evtests/actions/workflows/r.yml) &nbsp; [![codecov](https://codecov.io/gh/rodrigosqrt3/evtests/branch/main/graph/badge.svg)](https://app.codecov.io/gh/rodrigosqrt3/evtests)
+
 Tests and diagnostics for the upper tail of a distribution, to be used before
 an extreme value analysis: tests of the extreme value condition, tests of the
 domain of attraction and of a finite end-point, estimators of the extreme

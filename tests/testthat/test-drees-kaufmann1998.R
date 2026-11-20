@@ -60,6 +60,13 @@ test_that("estimated rho, other constants and validation", {
   expect_true(e$rho > 0)
   expect_true(!is.na(e$k))
   expect_equal(dk_rho1(c(NA, rep(1, 10)), 4, 0.6), 1)
+  # a flat Hill path gives 0 / 0, so rho falls back to 1
+  expect_equal(dk_rho1(c(NA, rep(1, 10)), 10, 0.6), 1)
+  # a threshold too large for the path is reduced by 0.9 until kbar exists
+  big <- drees_kaufmann1998(x, r_factor = 1e3)
+  expect_lt(big$r[["r"]], 1e3 * big$gamma_initial * 2000^0.25)
+  # tied top observations give a zero initial estimate
+  expect_error(drees_kaufmann1998(c(rep(5, 200), 1:3)), "not positive")
   expect_error(drees_kaufmann1998(x, rho = -1), "positive")
   expect_error(drees_kaufmann1998(x, xi = 1), "xi")
   expect_error(drees_kaufmann1998(c(-1, -2, 3, 4)), "4 positive")

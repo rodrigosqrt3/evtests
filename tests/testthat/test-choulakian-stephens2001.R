@@ -43,6 +43,17 @@ test_that("the statistics of Section 2 in closed form, and the p-values", {
   expect_equal(cs_points(0.9, "A2"), cs_points(0.5, "A2"))
 })
 
+test_that("no estimate, and the exponential case k = 0", {
+  expect_error(choulakian_stephens2001(c(1, 2, 3)), "does not exist")
+  local_mocked_bindings(grimshaw1993 = function(y) {
+    list(exists = TRUE, k = 0, scale = 1)
+  })
+  r <- choulakian_stephens2001(c(0.1, 0.5, 1, 2, 3))
+  z <- 1 - exp(-c(0.1, 0.5, 1, 2, 3))
+  i <- 1:5
+  expect_equal(r$W2, sum((z - (2 * i - 1) / 10)^2) + 1 / 60)
+})
+
 test_that("Table 4: the 5% points of A2 at the estimated shapes", {
   # thresholds 140, 130, 80, 70 of Davison & Smith (1990): k = 0.24, 0.14,
   # -0.34, -0.32 and printed points 1.10, 1.04, 0.865, 0.872

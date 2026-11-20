@@ -20,8 +20,7 @@ table_at <- function(tab, g) {
   grid <- grid[o]
   q <- tab$q[, o, drop = FALSE]
   g <- min(max(g, grid[1L]), grid[length(grid)])
-  j <- findInterval(g, grid, rightmost.closed = TRUE)
-  if (j >= length(grid)) return(q[, length(grid)])
-  w <- (g - grid[j]) / (grid[j + 1L] - grid[j])
+  j <- findInterval(g, grid, rightmost.closed = TRUE)  # in 1, ..., length - 1
+  w <-(g - grid[j]) / (grid[j + 1L] - grid[j])
   (1 - w) * q[, j] + w * q[, j + 1L]
 }

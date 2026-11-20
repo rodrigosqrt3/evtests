@@ -34,4 +34,12 @@ test_that("no rejection selects the lowest threshold; all, the highest", {
   rw <- bader2018(w, k = c(1500, 1200, 1000))
   if (rw$kF == 3) expect_equal(rw$k, 1000)
   expect_error(bader2018(1:20, k = 5), "between 10")
+  # equally spaced excesses have no maximum likelihood estimate
+  expect_error(bader2018(1:40, k = c(20, 15)), "does not exist")
+  # the default candidates
+  set.seed(4)
+  d <- bader2018((stats::runif(600)^(-0.1) - 1) / 0.1)
+  expect_equal(d$path$k,
+               sort(unique(round(seq(300, 25, length.out = 20))),
+                    decreasing = TRUE))
 })

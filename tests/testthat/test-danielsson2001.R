@@ -53,4 +53,7 @@ test_that("validation", {
   expect_error(danielsson2001(1:5), "at least 10")
   expect_error(danielsson2001(stats::runif(50), n1 = 60), "between 2")
   expect_error(danielsson2001(stats::runif(50), B = 0), "positive whole")
+  # with a single positive value no resample has two positive observations
+  expect_error(danielsson2001(c(-(1:50), 0.5), n1 = c(20, 30), B = 5),
+               "could not be evaluated")
 })

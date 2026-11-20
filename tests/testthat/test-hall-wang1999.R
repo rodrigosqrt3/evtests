@@ -60,6 +60,24 @@ test_that("the shape from the GLS slope", {
   expect_equal(hw_shape(d), 2.5, tolerance = 0.1)
 })
 
+test_that("records without an estimate, an empty region, the edge case", {
+  # G has no minimum before the limit at infinity: no estimate
+  na <- hall_wang1999(c(2.7, 3.7, 5.7, 9.1, 2, 9), k = 5, nsim = 2000)
+  expect_true(is.na(na$endpoint))
+  # no end-point is compatible with the record: empty region
+  em <- hall_wang1999(c(3.3, 3.2, 2.9, 2.8, 9.7, 3), k = 5, nsim = 2000)
+  expect_true(is.na(em$lower) && is.na(em$upper))
+  # only the limit at infinity is below the critical value
+  g <- c(0, 9.74, 76.34, 96.08, 112.85, 137, 137.63)
+  grid_min <- min(hw_g(hw_grid(g), g))
+  inf <- hw_g_inf(g)
+  expect_lt(inf, grid_min)
+  ci <- hw_interval(g, (inf + grid_min) / 2)
+  expect_equal(ci, c(hw_grid(g)[600], Inf))
+  # default k
+  expect_equal(hall_wang1999(stats::rexp(30), nsim = 2000)$k, 11L)
+})
+
 test_that("validation and a record without an estimate", {
   expect_error(hall_wang1999(1:3), "at least 4")
   expect_error(hall_wang1999(c(1, 1, 1, 1, 0), k = 3), "not all be equal")
