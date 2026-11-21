@@ -8,14 +8,26 @@ Description: Semiparametric tools to examine the upper tail of a sample before
     an extreme value analysis: tests of the extreme value condition, tests of
     the domain of attraction and of a finite end-point, estimators of the
     extreme value index and of the end-point, and the choice of the number of
-    upper order statistics. Includes the tests of Hasofer and Wang (1992),
-    Segers and Teugels (2000), Dietrich, de Haan and Husler (2002), Neves,
-    Picek and Fraga Alves (2006), Drees, de Haan and Li (2006), Neves and
-    Fraga Alves (2007), Neves and Pereira (2010), del Castillo, Daoudi and
-    Lockhart (2014) and Fraga Alves, Neves and Rosario (2016), and the
-    goodness-of-fit tests of Choulakian and Stephens (2001). Each method is
-    tested against the numerical results of its source paper, and the
-    differences found are documented.
+    upper order statistics. Includes the tests of Hasofer and Wang (1992)
+    <doi:10.1080/01621459.1992.10475189>, Segers and Teugels (2000)
+    <doi:10.1023/A:1011411212045>, Dietrich, de Haan and Husler (2002)
+    <doi:10.1023/A:1020934126695> with the critical values of Husler and Li
+    (2006) <doi:10.1007/s10687-006-0025-8>, Neves, Picek and Fraga Alves
+    (2006) <doi:10.1016/j.jspi.2004.09.008>, Drees, de Haan and Li (2006)
+    <doi:10.1016/j.jspi.2005.02.017>, Neves and Fraga Alves (2007)
+    <doi:10.1007/s11749-006-0010-1>, Neves and Pereira (2010)
+    <doi:10.1016/j.spl.2009.11.021>, del Castillo, Daoudi and Lockhart (2014)
+    <doi:10.1111/sjos.12037> and Fraga Alves, Neves and Rosario (2016)
+    <arXiv:1412.3972>, the goodness-of-fit tests of Choulakian and Stephens
+    (2001) <doi:10.1198/00401700152672573>, the end-point estimators of Hall
+    and Wang (1999) <doi:10.2307/3318618> and Fraga Alves and Neves (2014)
+    <doi:10.5705/ss.2013.183>, and the choice of the number of upper order
+    statistics of Drees and Kaufmann (1998)
+    <doi:10.1016/S0304-4149(98)00017-9>, Danielsson, de Haan, Peng and de
+    Vries (2001) <doi:10.1006/jmva.2000.1903>, Guillou and Hall (2001)
+    <doi:10.1111/1467-9868.00286> and Bader, Yan and Zhang (2018)
+    <doi:10.1214/17-AOAS1092>. Each method is tested against the numerical
+    results of its source paper, and the differences found are documented.
 Language: en-US
 License: GPL (>= 3)
 URL: https://github.com/rodrigosqrt3/evtests
