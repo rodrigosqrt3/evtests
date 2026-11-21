@@ -77,7 +77,11 @@ grimshaw1993 <- function(y) {
   theta_u <- 1 / ymax - eps
   h2_0 <- mean(y^2) - 2 * ybar^2
 
-  ty <- function(th) outer(th, y)
+  ty <- function(th) {
+    m <- outer(th, y)
+    m[m >= 1] <- NA_real_          # outside the support: no log of a negative
+    m
+  }
   h <- function(th) {                                   # equation 2.2
     m <- ty(th)
     (1 + rowMeans(log1p(-m))) * rowMeans(1 / (1 - m)) - 1

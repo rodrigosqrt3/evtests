@@ -68,8 +68,9 @@ drees_kaufmann1998 <- function(x, rho = 1, xi = 0.7, r_factor = 2.5) {
   # b[i] = Hill from the i largest (threshold zp[i]), i = 2, ..., np
   cs <- cumsum(lz)
   b <- c(NA_real_, cs[-np] / seq_len(np - 1L) - lz[-1L])
-  m0 <- max(2L, floor(2 * sqrt(np)))
-  g0 <- b[min(m0, np)]
+  m0 <- min(max(2L, floor(2 * sqrt(np))), np)
+  # computed from the log-excesses (exactly 0 for tied observations)
+  g0 <- mean(lz[seq_len(m0 - 1L)] - lz[m0])
   if (!(g0 > 0)) stop("the initial Hill estimate is not positive.",
                       call. = FALSE)
   kbar <- function(r) {
