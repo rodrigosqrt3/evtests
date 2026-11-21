@@ -40,7 +40,7 @@
 #' @references
 #' Neves, C., & Pereira, A. (2010). Detecting finiteness in the right
 #'   endpoint of light-tailed distributions. Statistics & Probability
-#'   Letters, 80(5-6), 437-444. doi:10.1016/j.spl.2009.11.022
+#'   Letters, 80(5-6), 437-444. doi:10.1016/j.spl.2009.11.021
 #'
 #' @examples
 #' set.seed(1)

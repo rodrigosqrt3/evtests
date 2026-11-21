@@ -60,5 +60,5 @@ neves_pereira2010(2 - stats::runif(1000)^0.3, k = c(50, 100))
 \references{
 Neves, C., & Pereira, A. (2010). Detecting finiteness in the right
 endpoint of light-tailed distributions. Statistics & Probability
-Letters, 80(5-6), 437-444. doi:10.1016/j.spl.2009.11.022
+Letters, 80(5-6), 437-444. doi:10.1016/j.spl.2009.11.021
 }
